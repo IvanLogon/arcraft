@@ -1,10 +1,13 @@
 package com.ivanlogon.arcraft;
 
+import com.ivanlogon.arcraft.registry.BlocksRegistry;
+import com.ivanlogon.arcraft.registry.ItemsRegistry;
 import com.mojang.logging.LogUtils;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -13,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
 import org.slf4j.Logger;
 
 import java.util.stream.Collectors;
@@ -21,17 +25,24 @@ import java.util.stream.Collectors;
 @Mod("arcraft")
 public class Arcraft
 {
+    public static final String MODID = "arcraft";
+
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public Arcraft()
     {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         // Register the setup method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        modEventBus.addListener(this::setup);
         // Register the enqueueIMC method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+        modEventBus.addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        modEventBus.addListener(this::processIMC);
+
+        ItemsRegistry.ITEMS.register(modEventBus);
+        BlocksRegistry.BLOCKS.register(modEventBus);
+
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -66,16 +77,4 @@ public class Arcraft
         LOGGER.info("HELLO from server starting");
     }
 
-    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-    // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents
-    {
-        @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent)
-        {
-            // Register a new block here
-            LOGGER.info("HELLO from Register Block");
-        }
-    }
 }

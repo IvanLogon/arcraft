@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ff ",
+		"fs ",
+		"  s"
+	],
+	"key": {
+		"f": {
+			"item": "minecraft:feather"
+		},
+		"s": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "arcraft:brush"
+	}
+}
